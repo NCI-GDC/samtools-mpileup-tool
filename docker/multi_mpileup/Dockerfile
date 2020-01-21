@@ -24,4 +24,4 @@ RUN	cd /opt/ \
 	&& cd - \
 	&& rm -rf
 
-ADD multi_mpileup /opt/
+ADD multi_samtools_mpileup.py /opt/
