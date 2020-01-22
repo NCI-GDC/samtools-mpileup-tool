@@ -13,6 +13,7 @@ RUN apt-get update -y \
 	zlib1g-dev \
 	libbz2-dev \
 	liblzma-dev \
+	python-dev \
 	&& apt-get clean
 
 RUN	cd /opt/ \
