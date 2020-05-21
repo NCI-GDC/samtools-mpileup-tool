@@ -108,7 +108,7 @@ def cmd_template(dct):
         "${REGION}",
         "${NORMAL}",
         "${TUMOR}",
-        ">",
+        "-o",
         "${OUTPUT}.mpileup",
     ]
     template = string.Template(" ".join(lst))
