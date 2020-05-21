@@ -1,10 +1,10 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 LABEL maintainer="sli6@uchicago.edu"
 LABEL version="1.1"
 LABEL description="Python wrapper of multithreading mpileup in samtools-1.1"
 
-RUN apt-get update -y \
-	&& apt-get install -y \
+RUN apt update -y \
+	&& apt install -y \
 	bzip2 \
 	gcc \
 	libncurses-dev \
@@ -13,7 +13,11 @@ RUN apt-get update -y \
 	zlib1g-dev \
 	libbz2-dev \
 	liblzma-dev \
-	python-dev \
+    software-properties-common
+
+RUN add-apt-repository ppa:deadsnakes/ppa \
+    && apt update -y \
+    && apt install python3.7 -y \
 	&& apt-get clean
 
 RUN	cd /opt/ \
@@ -25,4 +29,4 @@ RUN	cd /opt/ \
 	&& cd - \
 	&& rm -rf
 
-ADD multi_samtools_mpileup.py /opt/
+ADD multi_samtools_mpileup_p3.py /opt/
