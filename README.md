@@ -33,7 +33,7 @@ To run multi-threading samtools mpileup:
 
 ```
 [INFO] [20200121 22:20:53] [multi_samtools_mpileup] - --------------------------------------------------------------------------------
-[INFO] [20200121 22:20:53] [multi_samtools_mpileup] - multi_samtools_mpileup.py
+[INFO] [20200121 22:20:53] [multi_samtools_mpileup] - multi_samtools_mpileup_p3.py
 [INFO] [20200121 22:20:53] [multi_samtools_mpileup] - Program Args: /mnt/SCRATCH/githubs/samtools_mpileup_tool/docker/multi_mpileup/multi_mpileup.py -h
 [INFO] [20200121 22:20:53] [multi_samtools_mpileup] - --------------------------------------------------------------------------------
 usage: Internal multithreading samtools mpileup calling. [-h] -f
