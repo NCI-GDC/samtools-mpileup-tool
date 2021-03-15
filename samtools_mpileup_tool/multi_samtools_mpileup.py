@@ -33,7 +33,7 @@ class PopenReturn(NamedTuple):
 
 CMD_STR = dedent(
     """
-    samtools
+    {samtools}
     mpileup
     -f
     {reference_path}
@@ -126,6 +126,7 @@ def get_file_size(filename: pathlib.Path) -> int:
 
 
 def yield_formatted_commands(
+    samtools: str,
     reference_path: str,
     min_mq: str,
     normal_bam: str,
@@ -135,6 +136,7 @@ def yield_formatted_commands(
     """Yield commands for each BED interval."""
     for region in yield_bed_regions(interval_bed_path):
         cmd = CMD_STR.format(
+            samtools=samtools,
             reference_path=reference_path,
             min_mq=min_mq,
             region=region,
@@ -164,6 +166,8 @@ def setup_parser():
         "-c", "--thread_count", type=int, required=True, help="Number of thread."
     )
     parser.add_argument("-m", "--min_mq", type=int, required=True, help="min MQ.")
+    parser.add_argument("--samtools", default="/usr/local/bin/samtools", required=False)
+
     return parser
 
 
@@ -190,6 +194,7 @@ def run(run_args):
 
     run_commands = list(
         yield_formatted_commands(
+            run_args.samtools,
             run_args.reference_path,
             run_args.min_mq,
             run_args.normal_bam,
