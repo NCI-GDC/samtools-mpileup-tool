@@ -6,8 +6,8 @@ LABEL maintainer="sli6@uchicago.edu"
 LABEL version="1.1"
 LABEL description="Samtools-1.1"
 
+COPY --from=samtools / /
 COPY --from=python / /
-COPY --from=samtools /usr/local/bin/ /usr/local/bin/
 
 COPY ./dist/ /opt
 WORKDIR /opt
