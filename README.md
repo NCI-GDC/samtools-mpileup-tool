@@ -3,15 +3,6 @@
 
 Original samtools: https://www.htslib.org/
 
-## Docker
-
-There are two `Dockerfile`s for different purposes:
-
-* Vanilla samtools
-  * `/docker/Dockerfile` : Samtools docker without additional features.
-* Multi-threading samtools mpileup
-  * `/docker/multi_mpileup/Dockerfile` : A python multi-threading implementation on samtools mpileup function. Achieve `scatter/gather` method on Docker level.
-
 ## How to build
 
 https://docs.docker.com/engine/reference/builder/
