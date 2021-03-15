@@ -1,0 +1,33 @@
+language: python
+python:
+- '3.7'
+services: docker
+git:
+  depth: false
+install: make build
+stages:
+- name: test
+- name: publish-release
+  if: branch = master AND type != pull_request
+- name: publish-staging
+  if: branch != master AND type != pull_request
+jobs:
+  include:
+  - stage: test
+    name: Test Docker
+    script:
+    - make version version-pypi
+    - make test-docker
+  - stage: publish-staging
+    name: Publish staging image
+    script:
+    - make publish-staging
+  - stage: publish-release
+    name: Publish production image
+    script:
+    - make publish-release
+env:
+  global:
+  - BRANCH_NAME=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - secure: N+GOd1bw/B8lBa1PhddOCc+VLH7L0/U7il7x3RfjCSZ/R1U8X63NIkof2GAbXwGAqoOCA0KO79BF4/SN+VmjHX+PEUPMJaSeEJfn66IECP8CQvwsiZMf1kyC/jXd1f5oFP7NolQ8byDLCqkz/CEnKaNVM8cY3rS5RqIiY7M0NwFuGaGdCA7QQ/zMVbQBnIGUKu2b5Mxhx89a2rYIkFiJgDBszWvLGfxd7Oa5hm1AJlahd109ud426H/qwJFdOMFsDj1ZnJTitVhqL/4uJendu3hiVBiZdsOs3TZUvbuN1J9e9uzli9dHy740Tuc1PTh90AxyEozTGTDwAvk2tNZ3guoul0h+xLcvzi+akKJ4xeKA18QSorG/W1mltzwpqu5eZhNrH9JhbPIITH7nDsA0jNdEc7ErxzbEW8R6TrkeZaZOnAGaxQZd6wpJbRiPjLQbAlpN5VZiwMUqv5cjteWIk5uNzs5m9VkPn3jZYv2stzQH4QRBA9WM65cUU+MqKkvr1htc7eZ07AWe9/Fbs3AIz4b4Enk/A7di0pKNuNHyvlS1IelekVxMnY4kkIvL5UDp0UT4WRI11d7eIG3zgSQ4UZxqweHE17o65xCfk/IXLh2OZLHLuYyC9f1D5/jQG5nq009sUPBD1nFBX2SLGO4ovN7528jMl2h9bsYyDrpZwCs=
+  - secure: nilqMFYQpyVOdc5IxvFPMH2+vqd+LlJlTXTH1H78IxL+W9z0Fx02J6Of6td7xFNzLdkdKxRd+RDJkNU2/FEhRY66w8sDaMDWS+1s/tpUNPHsv9z2uLHQ/8kNb5Rqhf6Jhw3XLoFkWq+DxloLXE1bswCWCj0MMpg0AhsTTIo5RbfubX60DMMDEaqv2D0DNbv/Oi6x/AaMiRIsHnbHNipEy/F3yRtL3N+X7HiVADedJsrSWipffbutu60PML+gN1mIJO4SsF2ZGMVN3KCcV245Vm1B5ViLKOmIbPlreOE7ubY585CkDip4iCVOVjQI0dUdDEA5PK9bj6v7XkP0ke9QIWZcFm/HCU+lbWhWcamILBlVmzuF/OfqtDv1LUJledbfbxo/737g54ezZhYz4YCoCbdIsdGplUpJjqQ6ZP268bT8idZCTXd1SHRvN8t5YK2NUQNVoXoOIuhno2F3mXXEkA3EMAf33UctCWuwJq1zecYkfLc67z/MlI1wlKIBi3VfzA3ltk7hfINKwcdmkHCb4BP7Kco9/gjQbrJsxLwUg/cBVrZ9lmBGppJnnvpRSy2GxBuNGH0dfAmZ/1PgcLKPTFKV0sYmUMRcJGN8cG9w4XEgfdijoAxSEZst4/lMfgNJvvJm4nkerxpwMEAqvi7c3CpHxCzZfoJnpc5x0yoh03w=
