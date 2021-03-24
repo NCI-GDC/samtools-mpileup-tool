@@ -3,7 +3,6 @@
 Multithreading Samtools mpileup
 @author: Shenglai Li
 """
-
 import argparse
 import concurrent.futures
 import logging
@@ -12,6 +11,7 @@ import pathlib
 import shlex
 import subprocess
 import sys
+import time
 from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
@@ -62,7 +62,7 @@ def setup_logger():
     logger.addHandler(handler)
 
 
-def subprocess_commands_pipe(cmd: str, timeout: int = 3600, di=DI) -> PopenReturn:
+def subprocess_commands_pipe(cmd: str, timeout: int, di=DI) -> PopenReturn:
     """run pool commands"""
 
     output = di.subprocess.Popen(
@@ -82,7 +82,11 @@ def subprocess_commands_pipe(cmd: str, timeout: int = 3600, di=DI) -> PopenRetur
 
 
 def tpe_submit_commands(
-    cmds: List[Any], thread_count: int, fn: Callable = subprocess_commands_pipe, di=DI,
+    cmds: List[Any],
+    thread_count: int,
+    timeout: int,
+    fn: Callable = subprocess_commands_pipe,
+    di=DI,
 ) -> list:
     """Run commands on multiple threads.
 
@@ -92,6 +96,7 @@ def tpe_submit_commands(
         cmds (List[str]): List of inputs to pass to each thread.
         thread_count (int): Threads to run
         fn (Callable): Function to run using threads, must accept each element of cmds
+        timeout: int
     Returns:
         list of commands which raised exceptions
     Raises:
@@ -99,7 +104,7 @@ def tpe_submit_commands(
     """
     exceptions = []
     with di.futures.ThreadPoolExecutor(max_workers=thread_count) as executor:
-        futures = {executor.submit(fn, cmd): cmd for cmd in cmds}
+        futures = {executor.submit(fn, cmd, timeout): cmd for cmd in cmds}
         for future in di.futures.as_completed(futures):
             cmd = futures[future]
             try:
@@ -169,6 +174,13 @@ def setup_parser():
     )
     parser.add_argument("-m", "--min_mq", type=int, required=True, help="min MQ.")
     parser.add_argument("--samtools", default="/usr/local/bin/samtools", required=False)
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        required=False,
+        help="Max time for command to run, in seconds.",
+    )
 
     return parser
 
@@ -205,7 +217,9 @@ def run(run_args):
         )
     )
     # Start Queue
-    exceptions = tpe_submit_commands(run_commands, run_args.thread_count)
+    exceptions = tpe_submit_commands(
+        run_commands, run_args.thread_count, run_args.timeout
+    )
     if exceptions:
         for e in exceptions:
             logger.error(e)
@@ -228,9 +242,10 @@ def main(argv=None) -> int:
     argv = argv or sys.argv
     args = process_argv(argv)
     setup_logger()
-
+    start = time.time()
     try:
         run(args)
+        logger.info("Finished, took %s seconds.", round(time.time() - start, 2))
     except Exception as e:
         logger.exception(e)
         exit_code = 1
