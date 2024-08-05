@@ -23,7 +23,10 @@ from samtools_mpileup_tool import __version__
 
 logger = logging.getLogger(__name__)
 
-DI = SimpleNamespace(subprocess=subprocess, futures=concurrent.futures,)
+DI = SimpleNamespace(
+    subprocess=subprocess,
+    futures=concurrent.futures,
+)
 
 
 class PopenReturn(NamedTuple):
@@ -66,7 +69,9 @@ def subprocess_commands_pipe(cmd: str, timeout: int, di=DI) -> PopenReturn:
     """run pool commands"""
 
     output = di.subprocess.Popen(
-        shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        shlex.split(cmd),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
     try:
         output_stdout, output_stderr = output.communicate(timeout=timeout)
@@ -114,7 +119,6 @@ def tpe_submit_commands(
             except Exception as e:
                 exceptions.append(cmd)
                 logger.error(f"Exception occurred for command {cmd}: {e}")
-                raise e
     return exceptions
 
 
@@ -128,7 +132,7 @@ def yield_bed_regions(intervals_file: str) -> Generator[str, None, None]:
 
 
 def get_file_size(filename: pathlib.Path) -> int:
-    """ Gets file size """
+    """Gets file size"""
     return filename.stat().st_size
 
 
