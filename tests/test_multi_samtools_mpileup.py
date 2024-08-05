@@ -18,8 +18,8 @@ class ThisTestCase(unittest.TestCase):
         )
 
     def setup_popen(self, stdout=None, stderr=None, returncode=0):
-        stdout = stdout or b''
-        stderr = stderr or b''
+        stdout = stdout or b""
+        stderr = stderr or b""
         popen_instance = mock.create_autospec(subprocess.Popen, spec_set=True)
         self.mocks.subprocess.Popen.return_value = popen_instance
         popen_instance.communicate.return_value = (stdout, stderr)
@@ -39,7 +39,9 @@ class Test_subprocess_commands_pipe(ThisTestCase):
         cmd = MOD.CMD_STR
         MOD.subprocess_commands_pipe(cmd, timeout=3600, di=self.mocks)
         self.mocks.subprocess.Popen.assert_called_once_with(
-            MOD.shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            MOD.shlex.split(cmd),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         mock_popen.communicate.assert_called_once_with(timeout=3600)
 
@@ -48,12 +50,14 @@ class Test_subprocess_commands_pipe(ThisTestCase):
         cmd = MOD.CMD_STR
         mock_popen.communicate.side_effect = [
             subprocess.TimeoutExpired(cmd, 3600),
-            (b'', b'Timeout expired'),
+            (b"", b"Timeout expired"),
         ]
         with self.assertRaises(ValueError):
             MOD.subprocess_commands_pipe(cmd, timeout=3600, di=self.mocks)
         self.mocks.subprocess.Popen.assert_called_once_with(
-            MOD.shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            MOD.shlex.split(cmd),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         expected_calls = [
             mock.call(timeout=3600),
@@ -79,7 +83,7 @@ class Test_ThreadPoolExecutor(ThisTestCase):
             tpe_mock
         )
         timeout = 3600
-        commands = ['foo bar']
+        commands = ["foo bar"]
         mock_fn = mock.Mock()
         max_workers = 2
         MOD.tpe_submit_commands(
@@ -97,7 +101,7 @@ class Test_ThreadPoolExecutor(ThisTestCase):
 
     @unittest.skip("Skipping for testing purposes")
     def test_submit_returns_futures(self):
-        commands = list('abcde')
+        commands = list("abcde")
         tpe_mock = mock.MagicMock(spec_set=MOD.concurrent.futures.ThreadPoolExecutor)
         cmd_futures = self.yield_futures(commands)
         self.mocks.futures.as_completed.return_value = cmd_futures

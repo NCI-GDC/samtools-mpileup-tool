@@ -3,6 +3,7 @@
 Multithreading Samtools mpileup
 @author: Shenglai Li
 """
+
 import argparse
 import concurrent.futures
 import logging
@@ -200,8 +201,8 @@ def process_argv(argv: Optional[List] = None) -> namedtuple:
         args, unknown_args = parser.parse_known_args()
 
     args_dict = vars(args)
-    args_dict['extras'] = unknown_args
-    run_args = namedtuple('RunArgs', list(args_dict.keys()))
+    args_dict["extras"] = unknown_args
+    run_args = namedtuple("RunArgs", list(args_dict.keys()))
     return run_args(**args_dict)
 
 
@@ -230,7 +231,7 @@ def run(run_args):
         raise ValueError("Exceptions raised during processing.")
 
     # Check and merge outputs
-    p = pathlib.Path('.')
+    p = pathlib.Path(".")
     outputs = list(p.glob("*.mpileup"))
 
     # Sanity check

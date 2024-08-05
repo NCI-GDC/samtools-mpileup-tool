@@ -1,26 +1,32 @@
-FROM quay.io/ncigdc/samtools:1.1 AS samtools
-FROM quay.io/ncigdc/python37 AS python
+ARG REGISTRY=docker.osdc.io/ncigdc
+ARG BASE_CONTAINER_VERSION=latest
 
-ENV BINARY samtools_mpileup_tool
-LABEL maintainer="sli6@uchicago.edu"
-LABEL version="1.1"
-LABEL description="Samtools-1.1"
+FROM ${REGISTRY}/python3.9-builder:${BASE_CONTAINER_VERSION} as builder
 
-COPY --from=samtools / /
-COPY --from=python / /
+COPY ./ /samtools_mpileup_tool
 
-COPY ./dist/ /opt
-WORKDIR /opt
+WORKDIR /samtools_mpileup_tool
 
-RUN apt-get update \
-	&& apt-get install make \
-	&& rm -rf /var/lib/apt/lists/*
+RUN pip install tox && tox -e build
 
-RUN make init-pip \
-  && ln -s /opt/bin/${BINARY} /bin/${BINARY}
+FROM ${REGISTRY}/python3.9:${BASE_CONTAINER_VERSION}
 
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--", "samtools_mpileup_tool"]
+LABEL org.opencontainers.image.title="samtools_mpileup_tool" \
+      org.opencontainers.image.description="GDC Samtools mpileup" \
+      org.opencontainers.image.source="https://github.com/NCI-GDC/samtools-mpileup-tool.git" \
+      org.opencontainers.image.vendor="NCI GDC"
+
+COPY --from=builder /samtools_mpileup_tool/dist/*.whl /samtools_mpileup_tool/
+COPY requirements.txt /samtools_mpileup_tool/
+
+WORKDIR /samtools_mpileup_tool
+
+RUN pip install --no-deps -r requirements.txt \
+	&& pip install --no-deps *.whl \
+	&& rm -f *.whl requirements.txt
+
+USER app
+
+ENTRYPOINT ["samtools_mpileup_tool"]
+
 CMD ["--help"]
