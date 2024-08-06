@@ -1,0 +1,20 @@
+{
+    "template": "git@github.com:NCI-GDC/bio-python-template.git",
+    "commit": "baf2226bed9c364393971df5fb8ed3bdafa1c744",
+    "context": {
+      "cookiecutter": {
+        "full_name": "Linghao Song",
+        "email": "sxwcasd@gmail.com",
+        "github_username": "sxwcasd",
+        "project_name": "samtools-mpileup-tool",
+        "package_name": "samtools_mpileup_tool",
+        "project_short_description": "GDC Samtools mpileup",
+        "min_python_version": "3.9",
+        "github_repo": "https://github.com/NCI-GDC/samtools-mpileup-tool.git",
+        "commit": "baf2226bed9c364393971df5fb8ed3bdafa1c744",
+        "_template": "git@github.com:NCI-GDC/bio-python-template.git"
+      }
+    },
+    "directory": null,
+    "checkout": null
+  }
